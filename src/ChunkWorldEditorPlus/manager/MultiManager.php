@@ -1,47 +1,100 @@
 <?php
+
 namespace ChunkWorldEditorPlus\manager;
 
 use pocketmine\Server;
 use pocketmine\Player;
 use pocketmine\level\Level;
 
-use ChunkWorldEditorPlus\command\async\asyncsetcommand;
+use ChunkWorldEditorPlus\ChunkWorldEditorAPI;
+use ChunkWorldEditorPlus\task\AsyncExecuteTask;
+use ChunkWorldEditorPlus\command\setcommand;
 
+use ChunkWorldEditorPlus\type\undo;
 use ChunkWorldEditorPlus\type\range;
 
-use ChunkWorldEditorPlus\task\AsyncExecuteTask;
+/*
+ For PHP <= 7.3.0
+ Thank  https://www.php.net/manual/ja/function.array-key-last.php
+*/
 
-use ChunkWorldEditorPlus\ChunkWorldEditorAPI;
+if(function_exists("array_key_last")){
+	function array_key_last($array){
+		if(!is_array($array) || empty($array)){
+			return null;
+		}
+		return array_keys($array)[count($array)-1];
+	}
+}
 
-class MultiManager extends BaseManager{
+
+class MultiManager implements ManagerInterface{
+	use ManagerTrait;
+
 	public static function init(){
 		$array = [
-			multisetcommand::class,
+			"cmset" => setcommand::class,
 		];
 
-		foreach($array as $className){
-			self::registerCommand($className);
+		foreach($array as $commandName => $className){
+			self::registerCommand($commandName,$className);
 		}
 	}
 
 	public function onRun(String $command,Player $player,range $Range,array $args): bool{//mainより
 		if(self::hasCommand($command)){
+			
+			/*$threadcount = (int) $args[array_key_last($args)];
+			unset($args[array_key_last($args)]);
+			if(!ChunkWorldEditorAPI::is_natural($threadcount)){
+				return true;//
+			}*/
+
 			$command = self::getCommand($command);//
+
+			if($command->RequestRangePos()&&!$Range->isCompleted()){
+				$player->sendMessage("範囲指定に関しましては、不正の為、コマンドを実行することは出来ません。");
+				return true;
+			}
+
+			$Executeundo = ChunkWorldEditorAPI::isExecuteundo($args);
+
 			if($command->request() > count($args)){
 				return true;
 			}
+
+			$threadcount = 1;
+			if($command->request()+1 <= count($args)){
+				$threadcount = (int) $args[array_key_last($args)];
+				unset($args[array_key_last($args)]);
+				if(!ChunkWorldEditorAPI::is_natural($threadcount)){
+					return true;
+				}
+			}
+
+			var_dump($threadcount);
+
 			if(!$command->check($args)){
 				return true;
 			}
-			Server::getInstance()->broadcastMessage($command->getStartMessage($player,$Range,$args));
-
-			$thread = 4;
-
+			if($threadcount === 1){
+				Server::getInstance()->broadcastMessage($command->getStartMessage($player,$Range,$args,"_async"));
+			}else{
+				Server::getInstance()->broadcastMessage($command->getStartMessage($player,$Range,$args,"_multi"));
+			}
+			
 			$RangePos = $Range->getRangePos();
-			$generator = ChunkWorldEditorAPI::onDivide($RangePos,$thread);
-			foreach($generator as $RealRangePos){
-				$argument = $command->Preprocessing($player,$player->getLevel(),$RangePos,$RealRangePos,$args);
-				$asyncexecuter = new AsyncExecuteTask($player->getLevel(),$command,$RangePos,$RealRangePos,$argument);
+			if($Executeundo){
+				$undo = undo::get($player->getName())->reset();
+				$command->onUndoBackup($undo,$player,$player->getLevel(),$RangePos,$args);
+			}
+			$generator = ChunkWorldEditorAPI::onDivide($RangePos,$threadcount);
+			foreach($generator as $threadId => $RealRangePos){
+				$executor = clone $command;//
+				$executor->setThreadId($threadcount);
+				$argument = $executor->Preprocessing($player,$player->getLevel(),$RangePos,$RealRangePos,$args);
+				$asyncexecutor = new AsyncExecuteTask($player->getLevel()->getName(),$executor,$RangePos,$RealRangePos,$argument);
+				Server::getInstance()->getAsyncPool()->submitTask($asyncexecutor);
 				//$argument = $command->execute($Range->getRangePos(),$argument);
 				//$command->Success($player->getLevel(),$argument);
 				//Server::getInstance()->broadcastMessage($command->getEndMessage($player,$Range,$args));

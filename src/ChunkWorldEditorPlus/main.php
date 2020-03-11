@@ -1,17 +1,18 @@
 <?php
 namespace ChunkWorldEditorPlus;
 
+use pocketmine\Player;
 use pocketmine\Server;
-use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
 
 use pocketmine\command\Command;
-use pocketmine\command\CommandSender;
-
-use ChunkWorldEditorPlus\manager\AsyncManager;
-use ChunkWorldEditorPlus\manager\SyncManager;
+use pocketmine\plugin\PluginBase;
 
 use ChunkWorldEditorPlus\type\range;
+use pocketmine\command\CommandSender;
+use ChunkWorldEditorPlus\manager\SyncManager;
+use ChunkWorldEditorPlus\manager\MultiManager;
+use ChunkWorldEditorPlus\manager\undo\UndoManager;
 
 class main extends PluginBase{
 	public static $managerlists = [];
@@ -45,7 +46,8 @@ class main extends PluginBase{
 	public function loadmanager(){
 		$array = [
 			SyncManager::class,
-			AsyncManager::class
+			MultiManager::class,
+			UndoManager::class,
 		];
 		foreach($array as $className){
 			self::registerManager($className);

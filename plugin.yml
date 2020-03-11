@@ -1,0 +1,18 @@
+name: ChunkWorldEditorPlus
+main: ChunkWorldEditorPlus\main
+version: 1.0β
+api: 3.0.0
+load: POSTWORLD
+commands:
+ cset:
+  description: 
+  usage: "/cset"
+ caset:
+  description: 
+  usage: "/caset"
+ cmset:
+  description: 
+  usage: "/cmset"
+ cundo:
+  description: 
+  usage: "/cundo"

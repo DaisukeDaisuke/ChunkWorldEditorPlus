@@ -10,6 +10,7 @@ use pocketmine\utils\Config;
 
 use pocketmine\event\player\PlayerInteractEvent;
 
+use ChunkWorldEditorPlus\ChunkWorldEditorAPI;
 use ChunkWorldEditorPlus\type\range;
 
 class EventListener implements Listener{
@@ -34,6 +35,14 @@ class EventListener implements Listener{
 			$event->setCancelled();
 			$player = $event->getPlayer();
 			$name = $player->getName();
+
+			if($event->getBlock()->x === 0||$event->getBlock()->y === 0||$event->getBlock()->z === 0){
+				return;
+			}
+
+			if(!ChunkWorldEditorAPI::isTapRestricted($name)){
+				return;
+			}
 
 			$range = range::get($name);
 

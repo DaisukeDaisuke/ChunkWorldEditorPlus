@@ -3,12 +3,13 @@
 namespace ChunkWorldEditorPlus\type;
 
 use pocketmine\Server;
-use pocketmine\event\Listener;
-use pocketmine\math\Vector3;
-use pocketmine\level\Position;
 use pocketmine\item\Item;
 use pocketmine\block\Block;
+use pocketmine\math\Vector3;
+use pocketmine\event\Listener;
+use pocketmine\level\Position;
 
+use pocketmine\math\AxisAlignedBB;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\player\PlayerInteractEvent;
@@ -72,4 +73,8 @@ class range{
 		}
 		return null;
 	}
+
+	/*public function toAxisAlignedBB(): AxisAlignedBB{
+		return 
+	}*/
 }	
