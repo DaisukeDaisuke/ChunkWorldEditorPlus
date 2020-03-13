@@ -3,6 +3,7 @@ namespace ChunkWorldEditorPlus;
 
 use pocketmine\tile\Tile;
 use pocketmine\level\Level;
+use pocketmine\math\Vector3;
 use pocketmine\math\AxisAlignedBB;
 
 class ChunkWorldEditorAPI{
@@ -55,19 +56,30 @@ class ChunkWorldEditorAPI{
 				if (($tiles = self::TileEncode($chunk->getTiles())) !== null) $chunkTiles[] = $tiles;
 			}
 		}
-		var_dump($chunkTiles);
+		//var_dump($chunkTiles);
 		return $chunkTiles;
 	}
 
-	public static function Tileundo(Level $level,array $RangePos,array $tiles,Callable $fun){
-		$AxisAlignedBB = new AxisAlignedBB(...$RangePos);//
-		foreach(self::TileDecode($level,$RangePos,$tiles) as $tile){
-			if($AxisAlignedBB->isVectorInside($tile->asVector3())) continue;
-			if($fun($level,$RangePos,$tiles)){
-				$level->addTile($tile);
-				$tile->spawnToAll();
+	public static function Tileundo(Level $level,array $RangePos,array $ChunkTiles,Callable $fun){
+		//$AxisAlignedBB = new AxisAlignedBB(...$RangePos);//
+		//foreach(self::TileDecode($level,$RangePos,$tiles) as $tile){
+		foreach($ChunkTiles as $tiles){
+			foreach($tiles as $data){
+				//var_dump(self::isRangePosVectorInside($RangePos,$data[2]));
+				//if(!$AxisAlignedBB->isVectorInside($data[2])) continue;
+				if(!self::isRangePosVectorInside($RangePos,$data[2])) continue;
+				if($fun($level,$RangePos,$data)){
+					$tile = (new $data[1]($level,$data[0]));
+					//$tile->spawnToAll();
+				}
 			}
 		}
+	}
+
+	public static function isRangePosVectorInside(array $RangePos,Vector3 $vector): bool{
+		list($sx,$sy,$sz,$ex,$ey,$ez) = $RangePos;
+		return ($vector->x >= $sx&&$ex >= $vector->x)&&($vector->y >= $sy&&$ey >= $vector->y)&&($vector->z >= $sz&&$ez >= $vector->z);
+
 	}
 
 	public static function onDivide(array $RangePos,int $thread = 4): ?\Generator{
@@ -146,13 +158,13 @@ class ChunkWorldEditorAPI{
 
 	public static function TileEncode(array $tiles): ?array{
 		$return = [];
-		foreach($tiles as $object){
-			$return[] = [$object->saveNBT(),get_class($object)];
+		foreach($tiles as $tile){
+			$return[] = [$tile->saveNBT(),get_class($tile),$tile->asVector3()];
 		}
 		return count($return) !== 0 ? $return : null;
 	}
 
-	public static function TileDecode(Level $level,array $RangePos,array $ChunkTiles): \Generator{
+	/*public static function TileDecode(Level $level,array $RangePos,array $ChunkTiles): \Generator{
 		//var_dump($ChunkTiles);
 		foreach($ChunkTiles as $tiles){
 			foreach($tiles as $tile){
@@ -161,7 +173,7 @@ class ChunkWorldEditorAPI{
 				yield (new $tile[1]($level,$tile[0]));
 			}
 		}
-	}
+	}*/
 
 	public static function roundUpToAny(int $n,int $x = 5): int{
 		return (ceil($n)%$x === 0) ? ceil($n) : round(($n+$x/2)/$x)*$x;

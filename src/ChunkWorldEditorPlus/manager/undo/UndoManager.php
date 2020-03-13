@@ -31,7 +31,7 @@ class UndoManager implements ManagerInterface{
 			*/
 			$undo = undo::get($player->getName());
 			
-			$thread = (int) ($args[0] ?? 1);
+			$thread = (int) ($args[0] ?? 0);
 			
 			if(!ChunkWorldEditorAPI::is_natural($thread)){
 				return true;
@@ -52,16 +52,22 @@ class UndoManager implements ManagerInterface{
 			$level = $undo->getLevel();
 			$args = $undo->getArgs();
 
+			$TotalBlocks = range::CountBlocksByRangePos(...$RangePos);//
+			
 			$command = $undo->getTarget($command);
 			ChunkWorldEditorAPI::Tileundo($level,$RangePos,$ChunkTile,[$command,"onTileUndo"]);
 
 			//foreach($datas as $ThreadId => $undodata){
-			if($thread === 1){
+			if($thread === 0){
+				Server::getInstance()->broadcastMessage("[WorldEditor_Plus] ".$player->getName()."が変更を開始します…(undo) : ".$TotalBlocks."ブロック)");
+
 				$chunks = ChunkWorldEditorAPI::getChunks($level,...$RangePos);
 				$argument = $command->onundo($RangePos,$RangePos,$chunks,$backupChunks,$args);
 				$command->onUndoSuccess($level,$argument);
 				return true;
 			}
+
+			Server::getInstance()->broadcastMessage("[WorldEditor_Plus] ".$player->getName()."が変更を開始します…(undo_multi ".$thread."スレッド) : ".$TotalBlocks."ブロック)");
 
 			$generator = ChunkWorldEditorAPI::ondivide($RangePos,$thread);
 			foreach($generator as $threadId => $RealRangePos){

@@ -50,22 +50,22 @@ class undo{
 	}*/
 
 	public function isCanUndo(): bool{
-		if(!$this->getTarget() === null){
+		if($this->getTarget() === null){
 			return false;
 		}
-		if(!$this->getLevel() === null){
+		if($this->getLevel() === null){
 			return false;
 		}
-		if(!$this->getChunkTile() === null){
+		if($this->getChunkTile() === null){
 			return false;
 		}
-		if(!$this->getData() === null){
+		if($this->getData() === null){
 			return false;
 		}
-		if(!$this->getArgs() === null){
+		if($this->getArgs() === null){
 			return false;
 		}
-		if(!$this->getRangePos() === null){
+		if($this->getRangePos() === null){
 			return false;
 		}
 		/*if(!$this->isComplete()){

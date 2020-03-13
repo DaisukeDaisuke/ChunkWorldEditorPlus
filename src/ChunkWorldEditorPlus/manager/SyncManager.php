@@ -45,8 +45,9 @@ class SyncManager implements ManagerInterface{
 			Server::getInstance()->broadcastMessage($command->getStartMessage($player,$Range,$args));
 
 			//$RangePos = $command->RequestRangePos() ? $Range->getRangePos() : null;
+			$RangePos = $Range->getRangePos();
 			if($Executeundo){
-				$undo = undo::get($player->getNane())->reset();
+				$undo = undo::get($player->getName())->reset();
 				$command->onundobackup($undo,$player,$player->getLevel(),$RangePos,$args);
 			}
 			$argument = $command->Preprocessing($player,$player->getLevel(),$RangePos,$RangePos,$args);

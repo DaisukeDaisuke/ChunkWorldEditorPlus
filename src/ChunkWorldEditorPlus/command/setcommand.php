@@ -19,7 +19,7 @@ class setCommand extends BaseCommand{
 	}
 
 	public function execute(array $RangePos,array $RealRangePos,array $argument): array{
-		var_dump($RealRangePos);
+		//var_dump($RealRangePos);
 		list($sx,$sy,$sz,$ex,$ey,$ez) = $RealRangePos;
 		list($chunks,$id,$damage) = $argument;
 		$chunks = ChunkWorldEditorAPI::DecodeChunks($chunks);
@@ -81,7 +81,7 @@ class setCommand extends BaseCommand{
 		ChunkWorldEditorAPI::setChunks($level,$argument[0],$argument[1]);//$chunks
 	}
 
-	public function onTileUndo(Level $level,array $RangePos,array $tiles): bool{
+	public function onTileUndo(Level $level,array $RangePos,array $data): bool{
 		return true;
 	}
 

@@ -68,11 +68,22 @@ class range{
 
 	public function CountBlocks(): ?int{
 		if($this->isCompleted()){
+			return self::CountBlocksByRangePos(...$this->getRangePos());
+		}
+		return null;
+	}
+
+	public static function CountBlocksByRangePos($sx,$sy,$sz,$ex,$ey,$ez){
+		return ($ex - $sx + 1) * ($ey - $sy +1) * ($ez - $sz + 1);
+	}
+
+	/*public function CountBlocksByRangePos(): ?int{
+		if($this->isCompleted()){
 			list($sx,$sy,$sz,$ex,$ey,$ez) = $this->getRangePos();
 			return ($ex - $sx + 1) * ($ey - $sy +1) * ($ez - $sz + 1);
 		}
 		return null;
-	}
+	}*/
 
 	/*public function toAxisAlignedBB(): AxisAlignedBB{
 		return 

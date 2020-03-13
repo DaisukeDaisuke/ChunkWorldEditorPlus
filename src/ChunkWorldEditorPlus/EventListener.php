@@ -36,7 +36,7 @@ class EventListener implements Listener{
 			$player = $event->getPlayer();
 			$name = $player->getName();
 
-			if($event->getBlock()->x === 0||$event->getBlock()->y === 0||$event->getBlock()->z === 0){
+			if($event->getBlock()->x === 0&&$event->getBlock()->y === 0&&$event->getBlock()->z === 0){
 				return;
 			}
 

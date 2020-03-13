@@ -72,7 +72,7 @@ class MultiManager implements ManagerInterface{
 				}
 			}
 
-			var_dump($threadcount);
+			//var_dump($threadcount);
 
 			if(!$command->check($args)){
 				return true;
