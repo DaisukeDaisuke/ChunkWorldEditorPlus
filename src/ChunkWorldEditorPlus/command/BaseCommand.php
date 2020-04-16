@@ -26,7 +26,7 @@ abstract class BaseCommand{
 	public $Executeundo = null;
 
 	public function Preprocessing(Player $player,Level $level,array $RangePos,array $RealRangePos,array $args): array{
-		$this->setName($player->getName());
+		$this->setName($player->getName());//??
 		//$this->setExecuteundo($Executeundo);
 		/*if($this->isExecuteundo()){
 			undo::get($player->getNane())->setRangePos($this->getThreadId(),$RealRangePos);
@@ -66,7 +66,7 @@ abstract class BaseCommand{
 		
 	}
 
-	public function onTileUndo(Level $level,array $RangePos,array $tiles): bool{
+	public function onTileUndo(Level $level,array $RangePos,array $data,array $args): bool{
 		return true;
 	}
 
@@ -78,16 +78,20 @@ abstract class BaseCommand{
 		return $this->name;
 	}
 
-	private function setExecuteundo(bool $Executeundo){
+	/*private function setExecuteundo(bool $Executeundo){
 		$this->Executeundo = $Executeundo;
 	}
 
 	public function isExecuteundo(): bool{
 		return $this->Executeundo;
-	}
+	}*/
 
 	public function RequestRangePos(): bool{
 		return true;
+	}
+	
+	public function getRangePos(Player $player,array $args): ?array{
+		return null;
 	}
 
 	public function setThreadId(?int $ThreadId){

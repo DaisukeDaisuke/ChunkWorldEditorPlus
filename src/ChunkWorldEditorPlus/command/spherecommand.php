@@ -4,13 +4,14 @@ namespace ChunkWorldEditorPlus\command;
 use pocketmine\Player;
 use pocketmine\level\Level;
 
-use ChunkWorldEditorPlus\command\BaseCommand;
-use ChunkWorldEditorPlus\type\checker;
+use ChunkWorldEditorPlus\type\undo;
 use ChunkWorldEditorPlus\type\range;
+use ChunkWorldEditorPlus\type\checker;
 
 use ChunkWorldEditorPlus\ChunkWorldEditorAPI;
+use ChunkWorldEditorPlus\command\BaseCommand;
 
-class setCommand extends BaseCommand{
+class spherecommand extends BaseCommand{
 	public function Preprocessing(Player $player,Level $level,array $RangePos,array $RealRangePos,array $args): array{
 		parent::Preprocessing($player,$level, $RangePos,$RealRangePos,$args);
 		$chunks = ChunkWorldEditorAPI::getChunks($level,...$RealRangePos);
@@ -40,6 +41,9 @@ class setCommand extends BaseCommand{
 		//$Executeundo = $this->isExecuteundo();
 		//$undodata = "";
 
+        $xr = ($ex-$sx) / 2;
+        $zr = ($ez-$sz) / 2;
+
 		for($x = $sx; $x <= $ex; ++$x){
 			$chunkX = $x >> 4;
 			for($z = $sz; $z <= $ez; ++$z){
@@ -64,12 +68,9 @@ class setCommand extends BaseCommand{
 							continue;
 						}
 					}
-					/*if($Executeundo){
-						$undodata .= 
-						chr($currentSubChunk->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f)).
-						chr($currentSubChunk->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f));
-					}*/
-					$currentSubChunk->setBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $id, $damage);
+					if(($x*$x + $y*$y) <= $r){//$x*$x + $y*$y  $y*$y + $z*$z
+                        $currentSubChunk->setBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $id, $damage);
+                    }
 				}
 			}
 		}
@@ -81,8 +82,10 @@ class setCommand extends BaseCommand{
 		ChunkWorldEditorAPI::setChunks($level,$argument[0],$argument[1]);//$chunks
 	}
 
-	public function onTileUndo(Level $level,array $RangePos,array $data,array $args): bool{
-		return true;
+	public function onTileUndo(Level $level,array $RangePos,array $data,array $args): bool{//array $args
+		//list($sx,$sy,$sz,$ex,$ey,$ez) = $RangePos;
+        $vector3 = $data[2];
+		return ($vector3->x*$vector3-x + $vector3->y*$vector3->y) <= $r;
 	}
 
 	public function onundo(array $RangePos,array $RealRangePos,array $chunks,array $backupchunks,array $args): array{
@@ -126,7 +129,9 @@ class setCommand extends BaseCommand{
 							continue;
 						}
 					}
-					$currentSubChunk->setBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $currentBackupSubChunk->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f), $currentBackupSubChunk->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f));
+					if(($x*$x + $y*$y) <= $r){
+						$currentSubChunk->setBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $currentBackupSubChunk->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f), $currentBackupSubChunk->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f));
+					}
 				}
 			}
 		}
@@ -136,6 +141,28 @@ class setCommand extends BaseCommand{
 	public function onUndoSuccess(Level $level,array $argument){
 		ChunkWorldEditorAPI::setChunks($level,...$argument);
 	}
+
+	public function RequestRangePos(): bool{
+		return false;
+	}
+
+	public function getRangePos(Player $player,array $args): ?array{
+		if(!isset($args[0])||!checker::checkInt($args[0])){
+			return null;
+		}
+		return range::by($player)->getRangePos();
+	}
+
+
+	public function onUndoBackup(undo $undo,Player $player,Level $level,array $RangePos,array $args){
+		$undo->setData($this->getUndoChunks($player->getLevel(),$RangePos,$args));
+		$undo->setRangePos($RangePos);
+		$undo->setChunkTile(ChunkWorldEditorAPI::TileBackup($player->getLevel(),$RangePos));
+		$undo->setLevelName($player->getLevel()->getName());
+		$undo->setTarget($this);
+		$undo->setArgs($args);
+	}
+
 
 	/*public static function getCommand(): String{
 		return "cset";

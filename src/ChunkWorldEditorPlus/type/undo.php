@@ -26,6 +26,10 @@ class undo{
 		return self::$undo[$name];
 	}
 
+	public static function new(String $name): self{
+		
+	}
+
 	/*public static function set(self $undo){
 		self::$undo[$undo->getName()] = $undo;
 	}*/

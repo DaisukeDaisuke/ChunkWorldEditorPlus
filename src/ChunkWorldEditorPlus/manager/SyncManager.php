@@ -1,15 +1,17 @@
 <?php
 namespace ChunkWorldEditorPlus\manager;
 
-use pocketmine\Server;
 use pocketmine\Player;
+use pocketmine\Server;
 use pocketmine\level\Level;
-
-use ChunkWorldEditorPlus\ChunkWorldEditorAPI;
-use ChunkWorldEditorPlus\command\setcommand;
 
 use ChunkWorldEditorPlus\type\undo;
 use ChunkWorldEditorPlus\type\range;
+use ChunkWorldEditorPlus\command\boxcommand;
+
+use ChunkWorldEditorPlus\command\setcommand;
+use ChunkWorldEditorPlus\ChunkWorldEditorAPI;
+use ChunkWorldEditorPlus\command\spherecommand;
 
 class SyncManager implements ManagerInterface{
 	use ManagerTrait;
@@ -17,6 +19,10 @@ class SyncManager implements ManagerInterface{
 	public static function init(){
 		$array = [
 			"cset" => setcommand::class,
+			"cbox" => boxcommand::class,
+			"csphere" => spherecommand::class,
+			"csp" => spherecommand::class,
+			
 		];
 
 		foreach($array as $commandName => $className){
@@ -33,20 +39,23 @@ class SyncManager implements ManagerInterface{
 				return true;
 			}
 
-			$Executeundo = ChunkWorldEditorAPI::isExecuteundo($args);
+			$options = ChunkWorldEditorAPI::getOptions($args) ?? "";
+			//$Executeundo = ChunkWorldEditorAPI::hasOption($options,"a");
 
 			if($command->request() > count($args)){
+				$player->sendMessage("引数は不足しております為、コマンドを実行することは出来ません。");
 				return true;
 			}
 			if(!$command->check($args)){
+				$player->sendMessage("引数は不正の為、コマンドを実行することは出来ません。");
 				return true;
 			}
 			
 			Server::getInstance()->broadcastMessage($command->getStartMessage($player,$Range,$args));
 
-			//$RangePos = $command->RequestRangePos() ? $Range->getRangePos() : null;
-			$RangePos = $Range->getRangePos();
-			if($Executeundo){
+			$RangePos = $command->RequestRangePos() ? $Range->getRangePos() : null;
+			//$RangePos = $Range->getRangePos();
+			if(ChunkWorldEditorAPI::isExecuteundo()){
 				$undo = undo::get($player->getName())->reset();
 				$command->onundobackup($undo,$player,$player->getLevel(),$RangePos,$args);
 			}

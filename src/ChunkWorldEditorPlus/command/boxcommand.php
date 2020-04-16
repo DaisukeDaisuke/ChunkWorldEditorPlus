@@ -10,7 +10,7 @@ use ChunkWorldEditorPlus\type\range;
 
 use ChunkWorldEditorPlus\ChunkWorldEditorAPI;
 
-class setCommand extends BaseCommand{
+class boxcommand extends BaseCommand{
 	public function Preprocessing(Player $player,Level $level,array $RangePos,array $RealRangePos,array $args): array{
 		parent::Preprocessing($player,$level, $RangePos,$RealRangePos,$args);
 		$chunks = ChunkWorldEditorAPI::getChunks($level,...$RealRangePos);
@@ -64,12 +64,9 @@ class setCommand extends BaseCommand{
 							continue;
 						}
 					}
-					/*if($Executeundo){
-						$undodata .= 
-						chr($currentSubChunk->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f)).
-						chr($currentSubChunk->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f));
-					}*/
-					$currentSubChunk->setBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $id, $damage);
+					if($sx === $x||$sy === $y||$sz === $z||$ex === $x||$ey === $y||$ez === $z){
+                        $currentSubChunk->setBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $id, $damage);
+                    }
 				}
 			}
 		}
@@ -82,7 +79,9 @@ class setCommand extends BaseCommand{
 	}
 
 	public function onTileUndo(Level $level,array $RangePos,array $data,array $args): bool{
-		return true;
+        list($sx,$sy,$sz,$ex,$ey,$ez) = $RangePos;
+        $vector3 = $data[2];
+		return $sx === $vector3->x||$sy === $vector3->y||$sz === $vector3->z||$ex === $vector3->x||$ey === $vector3->y||$ez === $vector3->z;
 	}
 
 	public function onundo(array $RangePos,array $RealRangePos,array $chunks,array $backupchunks,array $args): array{
@@ -126,7 +125,9 @@ class setCommand extends BaseCommand{
 							continue;
 						}
 					}
-					$currentSubChunk->setBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $currentBackupSubChunk->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f), $currentBackupSubChunk->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f));
+					if($sx === $x||$sy === $y||$sz === $z||$ex === $x||$ey === $y||$ez === $z){
+						$currentSubChunk->setBlock($x & 0x0f, $y & 0x0f, $z & 0x0f, $currentBackupSubChunk->getBlockId($x & 0x0f, $y & 0x0f, $z & 0x0f), $currentBackupSubChunk->getBlockData($x & 0x0f, $y & 0x0f, $z & 0x0f));
+					}
 				}
 			}
 		}
@@ -154,7 +155,7 @@ class setCommand extends BaseCommand{
 	}
 
 	public function getLabel(Player $player,array $args): String{
-		return "chunk_set";// 
+		return "chunk_box";// 
 	}
 
 	public function getLabelOption(Player $player,array $args): String{

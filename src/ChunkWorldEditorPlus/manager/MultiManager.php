@@ -2,16 +2,18 @@
 
 namespace ChunkWorldEditorPlus\manager;
 
-use pocketmine\Server;
 use pocketmine\Player;
+use pocketmine\Server;
 use pocketmine\level\Level;
-
-use ChunkWorldEditorPlus\ChunkWorldEditorAPI;
-use ChunkWorldEditorPlus\task\AsyncExecuteTask;
-use ChunkWorldEditorPlus\command\setcommand;
 
 use ChunkWorldEditorPlus\type\undo;
 use ChunkWorldEditorPlus\type\range;
+use ChunkWorldEditorPlus\command\boxcommand;
+use ChunkWorldEditorPlus\command\setcommand;
+
+use ChunkWorldEditorPlus\ChunkWorldEditorAPI;
+use ChunkWorldEditorPlus\command\spherecommand;
+use ChunkWorldEditorPlus\task\AsyncExecuteTask;
 
 /*
  For PHP <= 7.3.0
@@ -34,6 +36,10 @@ class MultiManager implements ManagerInterface{
 	public static function init(){
 		$array = [
 			"cmset" => setcommand::class,
+			"cmbox" => boxcommand::class,
+			"cmsphere" => spherecommand::class,
+			"cmsp" => spherecommand::class,
+			
 		];
 
 		foreach($array as $commandName => $className){
@@ -57,7 +63,8 @@ class MultiManager implements ManagerInterface{
 				return true;
 			}
 
-			$Executeundo = ChunkWorldEditorAPI::isExecuteundo($args);
+			$options = ChunkWorldEditorAPI::getOptions($args) ?? "";
+			$Executeundo = ChunkWorldEditorAPI::hasOption($options,"a");
 
 			if($command->request() > count($args)){
 				return true;
@@ -83,8 +90,9 @@ class MultiManager implements ManagerInterface{
 				Server::getInstance()->broadcastMessage($command->getStartMessage($player,$Range,$args,"_multi"));
 			}
 			
-			$RangePos = $Range->getRangePos();
-			if($Executeundo){
+			//$RangePos = $Range->getRangePos();
+			$RangePos = $command->RequestRangePos() ? $Range->getRangePos() : null;
+			if(ChunkWorldEditorAPI::isExecuteundo()){
 				$undo = undo::get($player->getName())->reset();
 				$command->onUndoBackup($undo,$player,$player->getLevel(),$RangePos,$args);
 			}

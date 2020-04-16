@@ -51,7 +51,10 @@ class main extends PluginBase{
 			"ItemId" => "369",
 			"ItemDamage" => "0",
 			"Item_CustomName" => "§eChunkWorldEditor範囲指定",
+			"DefaultEnableUndo" => true,
 		]);
+
+		ChunkWorldEditorAPI::setExecuteundo((bool) $config->get("DefaultEnableUndo",true));
 
 		$this->loadmanager();
 

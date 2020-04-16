@@ -5,9 +5,11 @@ use pocketmine\tile\Tile;
 use pocketmine\level\Level;
 use pocketmine\math\Vector3;
 use pocketmine\math\AxisAlignedBB;
+use ChunkWorldEditorPlus\type\checker;
 
 class ChunkWorldEditorAPI{
 	public static $tap = [];
+	public static $Executeundo = true;
 
 	public static function getChunks(Level $level,int $sx,int $sy,int $sz,int $ex,int $ey,int $ez): array{
 		$chunks = [];
@@ -38,14 +40,37 @@ class ChunkWorldEditorAPI{
 		}
 	}
 
-	public static function isExecuteundo(array &$args): bool{
-	 	if(isset($args[0])&&$args[0] === "-a"){
+	public static function ToggleExecuteundo(): bool{
+		if(self::isExecuteundo()){
+			self::setExecuteundo(false);
+			return true;
+		}else{
+			self::setExecuteundo(true);
+			return false;
+		}
+	}
+
+	public static function setExecuteundo(bool $executeundo){
+		self::$Executeundo = $executeundo;
+	}
+
+	public static function isExecuteundo(): bool{
+		return self::$Executeundo;
+	}
+
+	public static function getOptions(array &$args): ?String{
+		if(isset($args[0])&&$args[0][0] === "-"){
+			$options = $args[0];
 			unset($args[0]);
 			$args = array_values($args);
-			return true;
-		}
-		return false;
-	}
+			return $options;
+	   }
+	   return null;
+   }
+
+   public static function hasOption(String $options,String $targetOption): bool{
+	   return strpos($options,$targetOption) !== false;
+   }
 
 	public static function TileBackup(Level $level,array $RangePos): array{
 		list($sx,$sy,$sz,$ex,$ey,$ez) = $RangePos;
@@ -60,7 +85,7 @@ class ChunkWorldEditorAPI{
 		return $chunkTiles;
 	}
 
-	public static function Tileundo(Level $level,array $RangePos,array $ChunkTiles,Callable $fun){
+	public static function Tileundo(Level $level,array $RangePos,array $ChunkTiles,array $args,Callable $fun){
 		//$AxisAlignedBB = new AxisAlignedBB(...$RangePos);//
 		//foreach(self::TileDecode($level,$RangePos,$tiles) as $tile){
 		foreach($ChunkTiles as $tiles){
@@ -68,7 +93,7 @@ class ChunkWorldEditorAPI{
 				//var_dump(self::isRangePosVectorInside($RangePos,$data[2]));
 				//if(!$AxisAlignedBB->isVectorInside($data[2])) continue;
 				if(!self::isRangePosVectorInside($RangePos,$data[2])) continue;
-				if($fun($level,$RangePos,$data)){
+				if($fun($level,$RangePos,$data,$args)){
 					$tile = (new $data[1]($level,$data[0]));
 					//$tile->spawnToAll();
 				}
@@ -197,5 +222,9 @@ class ChunkWorldEditorAPI{
 	*/
 	public static function is_natural($val): bool{
 		return (bool) preg_match('/\A[1-9][0-9]*\z/', $val);
+	}
+
+	public static function checkInt($val): bool{
+		return checker::checkInt($val);
 	}
 }

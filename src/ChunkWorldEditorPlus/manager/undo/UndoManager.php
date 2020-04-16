@@ -31,17 +31,20 @@ class UndoManager implements ManagerInterface{
 			*/
 			$undo = undo::get($player->getName());
 			
-			$thread = (int) ($args[0] ?? 0);
-			
-			if(!ChunkWorldEditorAPI::is_natural($thread)){
+			if(!ChunkWorldEditorAPI::checkInt($args[0] ?? 0)){
+				$player->sendMessage("スレッド数は不正の為、コマンドを実行することは出来ません。");
 				return true;
 			}
 
-			if($thread < 1){
+			$thread = (int) ($args[0] ?? 0);
+
+			/*if($thread < 0){
+				$player->sendMessage("スレッド数は不正の為、コマンドを実行することは出来ません。");
 				return true;
-			}
+			}*/
 
 			if(!$undo->isCanUndo()){
+				$player->sendMessage("undoデーターに関しましては、存在致しません為、コマンドを実行することは出来ません。");
 				return true;
 			}
 
@@ -55,7 +58,7 @@ class UndoManager implements ManagerInterface{
 			$TotalBlocks = range::CountBlocksByRangePos(...$RangePos);//
 			
 			$command = $undo->getTarget($command);
-			ChunkWorldEditorAPI::Tileundo($level,$RangePos,$ChunkTile,[$command,"onTileUndo"]);
+			ChunkWorldEditorAPI::Tileundo($level,$RangePos,$ChunkTile,$args,[$command,"onTileUndo"]);
 
 			//foreach($datas as $ThreadId => $undodata){
 			if($thread === 0){

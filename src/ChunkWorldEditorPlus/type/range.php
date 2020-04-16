@@ -2,13 +2,14 @@
 
 namespace ChunkWorldEditorPlus\type;
 
+use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\item\Item;
 use pocketmine\block\Block;
 use pocketmine\math\Vector3;
 use pocketmine\event\Listener;
-use pocketmine\level\Position;
 
+use pocketmine\level\Position;
 use pocketmine\math\AxisAlignedBB;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
@@ -19,8 +20,9 @@ class range{
 
 	public $pos = [];
 
-	public function __construct(){
-		//none
+	public function __construct(?Vector3 $vector3_1 = null,?Vector3 $vector3_2 = null){
+		$this->setPos(0,$vector3_1);
+		$this->setPos(1,$vector3_2);
 	}
 
 	public static function get(String $name): range{
@@ -75,6 +77,15 @@ class range{
 
 	public static function CountBlocksByRangePos($sx,$sy,$sz,$ex,$ey,$ez){
 		return ($ex - $sx + 1) * ($ey - $sy +1) * ($ez - $sz + 1);
+	}
+
+	public function spread(int $spread = 1){
+		
+	}
+
+	public static function RangeByPlayer(Player $player,int $spread = 1): ?array{
+		//$Range = new self($player->floor(),$player->floor())->;
+		//return [(int) ($player->x-$spread),(int) ($player->y-$spread),(int) ($player->z-$spread),(int) ($player->x+$spread),(int) ($player->y+$spread),(int) ($player->z+$spread)];
 	}
 
 	/*public function CountBlocksByRangePos(): ?int{
