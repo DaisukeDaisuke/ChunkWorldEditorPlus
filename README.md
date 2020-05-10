@@ -8,4 +8,4 @@ https://github.com/DaisukeDaisuke/ChunkWorldEditor
 https://github.com/DaisukeDaisuke/ChunkWorldEditorPlus/tree/dev
 
 ※歴史的な理由により、別リポジトリ上にて、開発を実施致しましております。  
-※今後フォーク元のリポジトリへ統合予定のため、アーカイブとなります、予定にてございます。  
+※今後フォーク元のリポジトリへ統合予定の為、アーカイブとなります、予定にてございます。  
