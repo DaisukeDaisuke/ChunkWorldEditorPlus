@@ -7,5 +7,5 @@ https://github.com/DaisukeDaisuke/ChunkWorldEditor
 ##### 開発バージョン(1.5β)
 https://github.com/DaisukeDaisuke/ChunkWorldEditorPlus/tree/dev
 
-※歴史的な理由により、別リポジトリ上にて、開発を実施致しましております。
-※今後フォーク元のリポジトリへ統合予定のため、アーカイブとなります、予定にてございます。
+※歴史的な理由により、別リポジトリ上にて、開発を実施致しましております。  
+※今後フォーク元のリポジトリへ統合予定のため、アーカイブとなります、予定にてございます。  
