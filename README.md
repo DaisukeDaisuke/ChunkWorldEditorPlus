@@ -4,7 +4,7 @@ https://github.com/DaisukeDaisuke/ChunkWorldEditor
 以上のプラグインの書き直しバージョンにてございます。  
 現在開発中にてございます。  
 
-##### 開発バージョン(1.5preβ)
+##### 開発バージョン(1.5 preβ)
 https://github.com/DaisukeDaisuke/ChunkWorldEditorPlus/tree/dev
 
 ※歴史的な理由により、別リポジトリ上にて、開発を実施致しましております。  
