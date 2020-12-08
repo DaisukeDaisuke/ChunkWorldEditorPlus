@@ -79,14 +79,31 @@ class range{
 		return ($ex - $sx + 1) * ($ey - $sy +1) * ($ez - $sz + 1);
 	}
 
-	public function spread(int $spread = 1){
+	/*public function spread(int $spread = 1){
 		
+	}*/
+
+	public static function diagonal($RangePos): array{
+		list($sx, $sy, $sz, $ex, $ey, $ez) = $RangePos;
+		return [$ex, $sy, $sz, $sx, $ey, $ez];//no RangePos
 	}
 
-	public static function RangeByPlayer(Player $player,int $spread = 1): ?array{
+	public static function sortRangePos($sx, $sy, $sz, $ex, $ey, $ez): ?array{//
+		$nsx = min($sx, $ex);
+		$nsy = min($sy, $ey);
+		$nsz = min($sz, $ez);
+		$nex = max($sx, $ex);
+		$ney = max($sy, $ey);
+		$nez = max($sz, $ez);
+		return [$nsx,$nsy,$nsz,$nex,$ney,$nez];
+	}
+
+
+
+	//public static function RangeByPlayer(Player $player,int $spread = 1): ?array{
 		//$Range = new self($player->floor(),$player->floor())->;
 		//return [(int) ($player->x-$spread),(int) ($player->y-$spread),(int) ($player->z-$spread),(int) ($player->x+$spread),(int) ($player->y+$spread),(int) ($player->z+$spread)];
-	}
+	//}
 
 	/*public function CountBlocksByRangePos(): ?int{
 		if($this->isCompleted()){

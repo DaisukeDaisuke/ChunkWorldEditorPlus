@@ -1,6 +1,7 @@
 <?php
 namespace ChunkWorldEditorPlus;
 
+use pocketmine\level\format\Chunk;
 use pocketmine\tile\Tile;
 use pocketmine\level\Level;
 use pocketmine\math\Vector3;
@@ -22,11 +23,16 @@ class ChunkWorldEditorAPI{
 		return $chunks;
 	}
 
-	//=> BaseCommand.php
-	public static function DecodeChunks(array $chunks): array{
+
+
+	/**
+	 * @param array $chunks
+	 * @return Chunk[]
+	 */
+	public static function DecodeChunks(array $chunks): array{ //=> BaseCommand.php
 		$returnchunks = [];
 		foreach($chunks as $hash => $binary){
-			$returnchunks[$hash] = \pocketmine\level\format\Chunk::fastDeserialize($binary);
+			$returnchunks[$hash] = clone \pocketmine\level\format\Chunk::fastDeserialize($binary);
 		}
 		return $returnchunks;
 	}
@@ -78,7 +84,7 @@ class ChunkWorldEditorAPI{
 		for($x = $sx; $x - 16 <= $ex; $x += 16){
 			for($z = $sz; $z - 16 <= $ez; $z += 16){
 				$chunk = $level->getChunk($x >> 4, $z >> 4, true);
-				if (($tiles = self::TileEncode($chunk->getTiles())) !== null) $chunkTiles[] = $tiles;
+				if(($tiles = self::TileEncode($chunk->getTiles())) !== null) $chunkTiles[] = $tiles;
 			}
 		}
 		//var_dump($chunkTiles);
@@ -103,11 +109,11 @@ class ChunkWorldEditorAPI{
 
 	public static function isRangePosVectorInside(array $RangePos,Vector3 $vector): bool{
 		list($sx,$sy,$sz,$ex,$ey,$ez) = $RangePos;
-		return ($vector->x >= $sx&&$ex >= $vector->x)&&($vector->y >= $sy&&$ey >= $vector->y)&&($vector->z >= $sz&&$ez >= $vector->z);
+		return ($vector->x >= $sx&&$ex >= $vector->x) && ($vector->y >= $sy&&$ey >= $vector->y) && ($vector->z >= $sz&&$ez >= $vector->z);
 
 	}
 
-	public static function onDivide(array $RangePos,int $thread = 4): ?\Generator{
+	public static function onDivide(array $RangePos,int $thread = 4): ?\Generator{//...?
 		list($sx,$sy,$sz,$ex,$ey,$ez) = $RangePos;
 		if(abs($ex-$sx) >= $thread){
 			if($ex-$sx > 0){
@@ -146,7 +152,7 @@ class ChunkWorldEditorAPI{
 			$player->sendMessage("x軸の合計及び、y軸の合計は、スレッド数(現在: ".$thread."スレッドです...)よりも一致または、多くする必要があります。");
 			$player->sendMessage("代わりと致しましては、「/////set」 又は「/////setpp」を利用して頂きたいです...");
 			*/
-			return null;
+			return null;//...?
 		}
 	}
 
@@ -214,6 +220,35 @@ class ChunkWorldEditorAPI{
 			self::$tap[$name] = $now;
 			return true;
 		}
+	}
+
+	/*
+		thanks
+		https://qiita.com/rana_kualu/items/7fce564d3f04a14a8e42
+	*/
+	/**
+	 * @param float[][]|int[][] $a
+	 * @param float[][]|int[][] $b
+	 * @return float[][]|int[][]
+	 * @throws \Exception
+	 */
+	public static function multiply(array $a, array $b): array{
+		$c = count($a[0]);
+		if($c !== count($b[0])){
+			throw new \Exception('Invalid Matrix size.');
+		}
+		$r = count($a);
+
+		$ret = [];
+		for($i=0;$i<$r;$i++){
+			for($j=0;$j<$r;$j++){
+				$ret[$i][$j] = 0;
+				for($k=0;$k<$c;$k++){
+					$ret[$i][$j] += $a[$i][$k] * $b[$k][$j];
+				}
+			}
+		}
+		return $ret;
 	}
 
 	/*

@@ -7,12 +7,36 @@ commands:
  cset:
   description: 
   usage: "/cset"
- caset:
-  description: 
-  usage: "/caset"
  cmset:
   description: 
   usage: "/cmset"
  cundo:
   description: 
   usage: "/cundo"
+ csphere:
+  description: 
+  usage: "/csphere"
+ cmsphere:
+  description: 
+  usage: "/cmsphere"
+ csp:
+  description: 
+  usage: "/csp"
+ cmsp:
+  description: 
+  usage: "/cmsp"
+ cbox:
+  description: 
+  usage: "/cbox"
+ cmbox:
+  description: 
+  usage: "/cmbox"
+ cfast:
+  description: 
+  usage: "/cfast"
+ csetpp:
+  description:
+  usage: "/csetpp"
+ crp:
+   description:
+   usage: "/crp"

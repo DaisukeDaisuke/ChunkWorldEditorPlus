@@ -6,7 +6,8 @@ use pocketmine\Server;
 
 use pocketmine\level\Level;
 use pocketmine\math\AxisAlignedBB;
-use ChunkWorldEditorPlus\command\BaseCommand;
+use ChunkWorldEditorPlus\editor\BaseCommand;
+
 
 class undo{
 	public static $undo = [];
@@ -26,9 +27,9 @@ class undo{
 		return self::$undo[$name];
 	}
 
-	public static function new(String $name): self{
+	/*public static function new(String $name): self{
 		
-	}
+	}*/
 
 	/*public static function set(self $undo){
 		self::$undo[$undo->getName()] = $undo;

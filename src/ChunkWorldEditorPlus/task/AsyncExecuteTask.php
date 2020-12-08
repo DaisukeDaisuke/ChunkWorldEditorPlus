@@ -5,7 +5,7 @@ use pocketmine\scheduler\AsyncTask;
 use pocketmine\level\Level;
 use pocketmine\Server;
 
-use ChunkWorldEditorPlus\command\BaseCommand;
+use ChunkWorldEditorPlus\editor\BaseCommand;
 
 class AsyncExecuteTask extends AsyncTask{
 	public $levelname;//Main thread access only...?

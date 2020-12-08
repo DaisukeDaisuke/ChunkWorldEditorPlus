@@ -37,9 +37,10 @@ use pocketmine\plugin\PluginBase;
 
 use ChunkWorldEditorPlus\type\range;
 use pocketmine\command\CommandSender;
-use ChunkWorldEditorPlus\manager\SyncManager;
-use ChunkWorldEditorPlus\manager\MultiManager;
-use ChunkWorldEditorPlus\manager\undo\UndoManager;
+use ChunkWorldEditorPlus\command\SyncManager;
+use ChunkWorldEditorPlus\command\MultiManager;
+use ChunkWorldEditorPlus\command\FastCommand;
+use ChunkWorldEditorPlus\command\undo\UndoManager;
 
 class main extends PluginBase{
 	public static $managerlists = [];
@@ -78,6 +79,7 @@ class main extends PluginBase{
 			SyncManager::class,
 			MultiManager::class,
 			UndoManager::class,
+			FastCommand::class,
 		];
 		foreach($array as $className){
 			self::registerManager($className);
