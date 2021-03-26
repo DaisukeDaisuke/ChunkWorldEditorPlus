@@ -88,7 +88,7 @@ class RotationPlusCommand extends BaseCommand{
 		//$rotation = ChunkWorldEditorAPI::multiply($array_z, $array_y);
 		//$rotation = ChunkWorldEditorAPI::multiply($rotation, $array_x);
 
-		//回転行列の合成(x+y+z)
+		//回転行列の合成(x+y+z) next(回転行列実施個所) => L247付近
 		$rotation = ChunkWorldEditorAPI::multiply($array_x, $array_y);
 		$rotation = ChunkWorldEditorAPI::multiply($rotation, $array_z);
 
@@ -100,9 +100,10 @@ class RotationPlusCommand extends BaseCommand{
 		$diffy = $ey - $sy;
 		$diffz = $ez - $sz;
 
-		//回転行列実行
+		//行列「$rotation」を用い、チャンク取得を実施するべき(対象)範囲を試算します。
 		//$spos = ChunkWorldEditorAPI::multiply($rotation, [[0, 0, 1], [0, 0, 1], [0, 0, 1]]);
 		$epos = ChunkWorldEditorAPI::multiply($rotation, [[0, 0, 0, $diffx], [0, 0, 0, $diffy], [0, 0, 0, $diffz], [0, 0, 0, 1]]);
+		//範囲を試算します。
 		$epos1 = ChunkWorldEditorAPI::multiply($rotation, [[0, 0, 0, 0], [0, 0, 0, $diffy], [0, 0, 0, $diffz], [0, 0, 0, 1]]);//24 0 0 = 23
 		$epos2 = ChunkWorldEditorAPI::multiply($rotation, [[0, 0, 0, $diffx], [0, 0, 0, $diffy], [0, 0, 0, 0], [0, 0, 0, 1]]);//24 0 0 = 23
 
