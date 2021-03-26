@@ -58,6 +58,7 @@ class RotationPlusCommand extends BaseCommand{
 		];
 		*/
 
+		//回転用 行列定義
 		$array_z = [
 			[$cosZ, -$sinZ, 0,0],
 			[$sinZ, $cosZ, 0,0],
@@ -82,6 +83,7 @@ class RotationPlusCommand extends BaseCommand{
 		//$rotation = ChunkWorldEditorAPI::multiply($array_z, $array_y);
 		//$rotation = ChunkWorldEditorAPI::multiply($rotation, $array_x);
 
+		//回転行列の合成(x+y+z)
 		$rotation = ChunkWorldEditorAPI::multiply($array_x, $array_y);
 		$rotation = ChunkWorldEditorAPI::multiply($rotation, $array_z);
 
@@ -93,6 +95,7 @@ class RotationPlusCommand extends BaseCommand{
 		$diffy = $ey - $sy;
 		$diffz = $ez - $sz;
 
+		//回転行列実行
 		//$spos = ChunkWorldEditorAPI::multiply($rotation, [[0, 0, 1], [0, 0, 1], [0, 0, 1]]);
 		$epos = ChunkWorldEditorAPI::multiply($rotation, [[0, 0, 0, $diffx], [0, 0, 0, $diffy], [0, 0, 0, $diffz], [0, 0, 0, 1]]);
 		$epos1 = ChunkWorldEditorAPI::multiply($rotation, [[0, 0, 0, 0], [0, 0, 0, $diffy], [0, 0, 0, $diffz], [0, 0, 0, 1]]);//24 0 0 = 23
