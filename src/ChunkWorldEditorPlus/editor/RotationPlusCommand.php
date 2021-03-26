@@ -59,6 +59,7 @@ class RotationPlusCommand extends BaseCommand{
 		*/
 
 		//回転用 行列定義
+		//z軸
 		$array_z = [
 			[$cosZ, -$sinZ, 0,0],
 			[$sinZ, $cosZ, 0,0],
@@ -66,6 +67,7 @@ class RotationPlusCommand extends BaseCommand{
 			[0, 0, 0, 1],
 		];
 
+		//y軸
 		$array_y = [
 			[$cosY, 0, $sinY,0],
 			[0, 1, 0, 0],
@@ -73,6 +75,7 @@ class RotationPlusCommand extends BaseCommand{
 			[0, 0, 0, 1],
 		];
 
+		//x軸
 		$array_x = [
 			[1, 0, 0, 0],
 			[0, $cosX, -$sinX ,0],
