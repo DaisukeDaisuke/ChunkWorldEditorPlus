@@ -59,6 +59,8 @@ class RotationPlusCommand extends BaseCommand{
 		*/
 
 		//回転用 行列定義
+		//参考 
+		//https://imagingsolution.net/math/rotation-scaling-translation-3d-matrix/
 		//z軸
 		$array_z = [
 			[$cosZ, -$sinZ, 0,0],
